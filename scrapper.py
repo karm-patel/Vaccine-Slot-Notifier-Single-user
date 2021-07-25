@@ -18,7 +18,7 @@ class VaccineSlot:
         if data["by_district"] == 1:
             self.dist_id = data["district_id"]
 
-    def get_available_slots(self):
+    def get_available_slots(self,interest):
         today = datetime.today().date()
         day = str(today.day)
         month = str(today.month)
@@ -58,7 +58,9 @@ class VaccineSlot:
 
             for each in all_centers:
                 center_name = each["name"].strip()
-                if each['sessions']:
+                present = 0
+                matches = sum([int(each in center_name.lower()) for each in interest])
+                if matches and each['sessions']:
                     for sess in each['sessions']:
                         #print(sess)
 
@@ -101,12 +103,17 @@ with open(os.path.join(current_path,"district_ids.json"), "r") as fp:
     district_ids = json.load(fp)
 
 with open("input.txt","r") as fp:
-    state, district, age, email = [each.strip() for each in fp.readlines()]
+    state, district,keywords, age, email = [each.strip() for each in fp.readlines()]
+    keywords = keywords.split(" ")
+    print(keywords)
 
 with open("email_pass.txt","r") as fp:
     sender_email,password = [each.strip() for each in fp.readlines()]
     #print(sender_email,password)
+
+
 waiting_time = 1
+continuous_sent = 0
 while True:
 
     district_id = district_ids[state][district]
@@ -116,15 +123,17 @@ while True:
 
     print(f"{datetime.now(IST)} - {email}")
 
-    slots,dist_name = obj.get_available_slots()
+    slots,dist_name = obj.get_available_slots(interest=keywords)
     if district == "error":
         send_mail(message=f"Karm!, I can not scrape the slots, Something is wrong, Can you please check "
                           f"it?\n{slots}",receiver_email=email,sender_email=sender_email,password=password)
         time.sleep(60*waiting_time)
         waiting_time*=1.5
+        continuous_sent+=1
     elif slots != {}:
         send_mail(message=f"Run Karm!, Book your slot in {district}!\n{slots}",receiver_email=email,
                   sender_email=sender_email,password=password)
+        continuous_sent+=1
 
     time.sleep(10)
 
