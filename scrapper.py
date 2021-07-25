@@ -135,7 +135,7 @@ while True:
                   sender_email=sender_email,password=password)
         continuous_sent+=1
 
-    time.sleep(10)
+    time.sleep(5)
 
 
 
