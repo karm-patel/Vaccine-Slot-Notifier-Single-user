@@ -114,6 +114,7 @@ with open("email_pass.txt","r") as fp:
 
 waiting_time = 1
 continuous_sent = 0
+minitue_flag = 1
 while True:
 
     district_id = district_ids[state][district]
@@ -134,6 +135,13 @@ while True:
         send_mail(message=f"Run Karm!, Book your slot in {district}!\n{slots}",receiver_email=email,
                   sender_email=sender_email,password=password)
         continuous_sent+=1
+
+    if minitue_flag and datetime.now().minute == 0:
+        send_mail(message=f"Karm, I'm alive, Chill !!", receiver_email=
+        "karmasmart216@gmail.com", sender_email=sender_email, password=password)
+        minitue_flag = 0
+    if datetime.now().minute > 0:
+        minitue_flag = 1
 
     time.sleep(5)
 
