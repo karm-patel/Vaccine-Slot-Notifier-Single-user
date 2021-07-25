@@ -48,7 +48,7 @@ class VaccineSlot:
             resp = resp.replace("false", "False")
             resp = eval(resp)
 
-            #print("responce:", type(resp),resp,)
+            #print("responce:",resp,)
             all_centers = resp['centers']
 
             if len(all_centers) > 0:
@@ -63,16 +63,16 @@ class VaccineSlot:
                 if matches and each['sessions']:
                     for sess in each['sessions']:
                         #print(sess)
-
-                        if sess["available_capacity_dose2"]>=2:
-                            data = {"available_capacity_dose2": sess["available_capacity_dose2"]
+                        #print("vaccine-",sess['vaccine'].lower(),center_name)
+                        if sess["available_capacity_dose2"]>=2 and sess['vaccine'].lower() == "covishield":
+                            data = {"vaccine":sess['vaccine'],"available_capacity_dose2": sess["available_capacity_dose2"]
                                 , "date": sess["date"]}
                             if center_name not in available:
                                 available[center_name] = [data]
                             else:
                                 available[center_name].append(data)
-                        elif sess["available_capacity"] >= 2:
-                            data = {"available_capacity": sess["available_capacity"]
+                        elif sess["available_capacity"] >= 2 and sess['vaccine'].lower() == "covishield":
+                            data = {"vaccine":sess['vaccine'],"available_capacity": sess["available_capacity"]
                                 , "date": sess["date"]}
                             if center_name not in available:
                                 available[center_name] = [data]
